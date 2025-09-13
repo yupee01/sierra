@@ -6317,7 +6317,7 @@ function Luna:CreateWindow(WindowSettings)
 			})
 
 			Tab:CreateButton({
-				Name = "Удалить конфиг из автозагрузки",
+				Name = "Очистить автозагрузку",
 				Description = nil,
 				Callback = function()
 					local name = selectedConfig
@@ -6328,7 +6328,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = "Конфиг %q удален из автозагрузки" name,
+						Content = "Автозагрузка была успешно очищена",
 					})
 				end,
 			})
