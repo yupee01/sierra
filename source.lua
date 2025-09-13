@@ -6481,7 +6481,7 @@ function Luna:CreateWindow(WindowSettings)
 				end
 			})
 
-			Tab:CreateSection("Preset Gradients")
+			Tab:CreateSection("Пресеты градиента")
 
 			for i,v in pairs(PresetGradients) do
 				Tab:CreateButton({
@@ -6593,7 +6593,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Interface",
 						Icon = "sparkle",
 						ImageSource = "Material",
-						Content = "Failed to load autoload config: " .. err,
+						Content = "Не удалось загрузить конфиг из автозагрузки: " .. err,
 					})
 				end
 
@@ -6601,7 +6601,7 @@ function Luna:CreateWindow(WindowSettings)
 					Title = "Interface",
 					Icon = "sparkle",
 					ImageSource = "Material",
-					Content = string.format("Auto loaded config %q", name),
+					Content = string.format("Загружен конфиг из автозагрузки %q", name),
 				})
 
 			end 
