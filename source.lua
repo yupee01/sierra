@@ -6328,7 +6328,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = "Конфиг %q удален из автозагрузки",
+						Content = "Конфиг %q удален из автозагрузки" name,
 					})
 				end,
 			})
