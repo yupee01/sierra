@@ -6438,17 +6438,17 @@ function Luna:CreateWindow(WindowSettings)
 			Tab:CreateSection("Пользовательский редактор")
 
 			local c1cp = Tab:CreateColorPicker({
-				Name = "Color 1",
+				Name = "Цвет 1",
 				Color = Color3.fromRGB(117, 164, 206),
 			}, "LunaInterfaceSuitePrebuiltCPC1") -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 
 			local c2cp = Tab:CreateColorPicker({
-				Name = "Color 2",
+				Name = "Цвет 2",
 				Color = Color3.fromRGB(123, 201, 201),
 			}, "LunaInterfaceSuitePrebuiltCPC2")
 
 			local c3cp = Tab:CreateColorPicker({
-				Name = "Color 3",
+				Name = "Цвет 3",
 				Color = Color3.fromRGB(224, 138, 184),
 			}, "LunaInterfaceSuitePrebuiltCPC3") 
 
@@ -6481,7 +6481,7 @@ function Luna:CreateWindow(WindowSettings)
 				end
 			})
 
-			Tab:CreateSection("Preset Gradients")
+			Tab:CreateSection("Пресеты графики")
 
 			for i,v in pairs(PresetGradients) do
 				Tab:CreateButton({
