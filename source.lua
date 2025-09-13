@@ -6590,18 +6590,18 @@ function Luna:CreateWindow(WindowSettings)
 				local success, err = Luna:LoadConfig(name)
 				if not success then
 					return Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "sparkle",
 						ImageSource = "Material",
-						Content = "Failed to load autoload config: " .. err,
+						Content = "Не удалось загрузить конфиг: " .. err,
 					})
 				end
 
 				Luna:Notification({
-					Title = "Interface",
+					Title = "Интерфейс",
 					Icon = "sparkle",
 					ImageSource = "Material",
-					Content = string.format("Auto loaded config %q", name),
+					Content = string.format("Загружен конфиг %q", name),
 				})
 
 			end 
