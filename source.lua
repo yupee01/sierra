@@ -6229,7 +6229,7 @@ function Luna:CreateWindow(WindowSettings)
 				Name = "Выбрать конфиг",
 				Description = nil,
 				Options = Luna:RefreshConfigList(),
-				CurrentOption = {},
+				CurrentOption = {Пусто},
 				MultipleOptions = false,
 				SpecialType = nil,
 				Callback = function(Value)
@@ -6328,7 +6328,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = "Удален конфиг из автозагрузки",
+						Content = "Конфиг удален из автозагрузки",
 					})
 				end,
 			})
@@ -6590,7 +6590,7 @@ function Luna:CreateWindow(WindowSettings)
 				local success, err = Luna:LoadConfig(name)
 				if not success then
 					return Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "sparkle",
 						ImageSource = "Material",
 						Content = "Не удалось загрузить конфиг из автозагрузки: " .. err,
@@ -6598,7 +6598,7 @@ function Luna:CreateWindow(WindowSettings)
 				end
 
 				Luna:Notification({
-					Title = "Interface",
+					Title = "Интерфейс",
 					Icon = "sparkle",
 					ImageSource = "Material",
 					Content = string.format("Загружен конфиг из автозагрузки %q", name),
