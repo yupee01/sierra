@@ -6481,7 +6481,7 @@ function Luna:CreateWindow(WindowSettings)
 				end
 			})
 
-			Tab:CreateSection("Пресеты графики")
+			Tab:CreateSection("Пресеты градиента")
 
 			for i,v in pairs(PresetGradients) do
 				Tab:CreateButton({
