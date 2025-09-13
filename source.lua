@@ -2637,7 +2637,7 @@ function Luna:CreateWindow(WindowSettings)
 					end
 				end
 
-				HomeTabPage.detailsholder.dashboard.Friends.All.Value.Text = tostring(friendsInTotal).." friends"
+				HomeTabPage.detailsholder.dashboard.Друзья.All.Value.Text = tostring(friendsInTotal).." friends"
 				HomeTabPage.detailsholder.dashboard.Friends.Offline.Value.Text = tostring(friendsInTotal - onlineFriends).." friends"
 				HomeTabPage.detailsholder.dashboard.Friends.Online.Value.Text = tostring(onlineFriends).." friends"
 				HomeTabPage.detailsholder.dashboard.Friends.InGame.Value.Text = tostring(friendsInGame).." friends"
