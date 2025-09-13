@@ -6229,7 +6229,7 @@ function Luna:CreateWindow(WindowSettings)
 				Name = "Выбрать конфиг",
 				Description = nil,
 				Options = Luna:RefreshConfigList(),
-				CurrentOption = {Пусто},
+				CurrentOption = {},
 				MultipleOptions = false,
 				SpecialType = nil,
 				Callback = function(Value)
@@ -6280,7 +6280,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = string.format("Overwrote config %q", selectedConfig),
+						Content = string.format("Конфиг %q перезаписан", selectedConfig),
 					})
 				end
 			})
@@ -6328,7 +6328,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = "Конфиг удален из автозагрузки",
+						Content = "Конфиг %q удален из автозагрузки",
 					})
 				end,
 			})
