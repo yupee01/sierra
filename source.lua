@@ -6164,13 +6164,13 @@ function Luna:CreateWindow(WindowSettings)
 			local selectedConfig = nil
 
 			local Title = Elements.Template.Title:Clone()
-			Title.Text = "Configurations"
+			Title.Text = "Конфигурация"
 			Title.Visible = true
 			Title.Parent = TabPage
 			Title.TextTransparency = 1
 			TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
 
-			Tab:CreateSection("Создать конфиг")
+			Tab:CreateSection("Сохранить конфиг")
 
 			Tab:CreateInput({
 				Name = "Название конфига",
@@ -6193,7 +6193,7 @@ function Luna:CreateWindow(WindowSettings)
 				Callback = function()
 					if not inputPath or string.gsub(inputPath, " ", "") == "" then
 						Luna:Notification({
-							Title = "Interface",
+							Title = "Интерфейс",
 							Icon = "warning",
 							ImageSource = "Material",
 							Content = "Имя конфига не может быть пустым."
@@ -6204,7 +6204,7 @@ function Luna:CreateWindow(WindowSettings)
 					local success, returned = Luna:SaveConfig(inputPath)
 					if not success then
 						Luna:Notification({
-							Title = "Interface",
+							Title = "Интерфейс",
 							Icon = "error",
 							ImageSource = "Material",
 							Content = "Unable to save config, return error: " .. returned
@@ -6212,7 +6212,7 @@ function Luna:CreateWindow(WindowSettings)
 					end
 
 					Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
 						Content = string.format("Создан конфиг %q", inputPath),
@@ -6222,7 +6222,7 @@ function Luna:CreateWindow(WindowSettings)
 				end
 			})
 
-			Tab:CreateSection("Config Load/Settings")
+			Tab:CreateSection("Настроить/Загрузить конфиг")
 
 
 			configSelection = Tab:CreateDropdown({
@@ -6244,7 +6244,7 @@ function Luna:CreateWindow(WindowSettings)
 					local success, returned = Luna:LoadConfig(selectedConfig)
 					if not success then
 						Luna:Notification({
-							Title = "Interface",
+							Title = "Интерфейс",
 							Icon = "error",
 							ImageSource = "Material",
 							Content = "Unable to load config, return error: " .. returned
@@ -6253,7 +6253,7 @@ function Luna:CreateWindow(WindowSettings)
 					end
 
 					Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
 						Content = string.format("Загружен конфиг %q", selectedConfig),
@@ -6268,7 +6268,7 @@ function Luna:CreateWindow(WindowSettings)
 					local success, returned = Luna:SaveConfig(selectedConfig)
 					if not success then
 						Luna:Notification({
-							Title = "Interface",
+							Title = "Интерфейс",
 							Icon = "error",
 							ImageSource = "Material",
 							Content = "Unable to overwrite config, return error: " .. returned
@@ -6277,7 +6277,7 @@ function Luna:CreateWindow(WindowSettings)
 					end
 
 					Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
 						Content = string.format("Overwrote config %q", selectedConfig),
@@ -6300,10 +6300,10 @@ function Luna:CreateWindow(WindowSettings)
 				Callback = function()
 					local name = selectedConfig
 					writefile(Luna.Folder .. "/settings/autoload.txt", name)
-					loadlabel:Set({ Text = "Текущий конфиг в автозагрузке: " .. name })
+					loadlabel:Set({ Text = "Конфиг в автозагрузке: " .. name })
 
 					Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
 						Content = string.format("Конфиг %q поставлен в автозагрузку", name),
@@ -6325,7 +6325,7 @@ function Luna:CreateWindow(WindowSettings)
 					loadlabel:Set({ Text = "Пусто" })
 
 					Luna:Notification({
-						Title = "Interface",
+						Title = "Интерфейс",
 						Icon = "info",
 						ImageSource = "Material",
 						Content = "Удален конфиг из автозагрузки",
