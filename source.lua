@@ -6170,12 +6170,12 @@ function Luna:CreateWindow(WindowSettings)
 			Title.TextTransparency = 1
 			TweenService:Create(Title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
 
-			Tab:CreateSection("Config Creator")
+			Tab:CreateSection("Создать конфиг")
 
 			Tab:CreateInput({
-				Name = "Config Name",
-				Description = "Insert a name for your to be created config.",
-				PlaceholderText = "Name",
+				Name = "Название конфига",
+				Description = nil,
+				PlaceholderText = "",
 				CurrentValue = "",
 				Numeric = false,
 				MaxCharacters = nil,
@@ -6188,15 +6188,15 @@ function Luna:CreateWindow(WindowSettings)
 			local configSelection
 
 			Tab:CreateButton({
-				Name = "Create Config",
-				Description = "Create a config with all of your current settings.",
+				Name = "Создать конфиг",
+				Description = nil,
 				Callback = function()
 					if not inputPath or string.gsub(inputPath, " ", "") == "" then
 						Luna:Notification({
 							Title = "Interface",
 							Icon = "warning",
 							ImageSource = "Material",
-							Content = "Config name cannot be empty."
+							Content = "Имя конфига не может быть пустым."
 						})
 						return
 					end
@@ -6215,7 +6215,7 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Interface",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = string.format("Created config %q", inputPath),
+						Content = string.format("Создан конфиг %q", inputPath),
 					})
 
 					configSelection:Set({ Options = Luna:RefreshConfigList() })
@@ -6226,8 +6226,8 @@ function Luna:CreateWindow(WindowSettings)
 
 
 			configSelection = Tab:CreateDropdown({
-				Name = "Select Config",
-				Description = "Select a config to load your settings on.",
+				Name = "Выбрать конфиг",
+				Description = nil,
 				Options = Luna:RefreshConfigList(),
 				CurrentOption = {},
 				MultipleOptions = false,
@@ -6238,8 +6238,8 @@ function Luna:CreateWindow(WindowSettings)
 			})
 
 			Tab:CreateButton({
-				Name = "Load Config",
-				Description = "Load your saved config settings.",
+				Name = "Загрузить конфиг",
+				Description = nil,
 				Callback = function()
 					local success, returned = Luna:LoadConfig(selectedConfig)
 					if not success then
@@ -6256,14 +6256,14 @@ function Luna:CreateWindow(WindowSettings)
 						Title = "Interface",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = string.format("Loaded config %q", selectedConfig),
+						Content = string.format("Загружен конфиг %q", selectedConfig),
 					})
 				end
 			})
 
 			Tab:CreateButton({
-				Name = "Overwrite Config",
-				Description = "Overwrite your current config settings.",
+				Name = "Перезаписать конфиг",
+				Description = nil,
 				Callback = function()
 					local success, returned = Luna:SaveConfig(selectedConfig)
 					if not success then
@@ -6286,8 +6286,8 @@ function Luna:CreateWindow(WindowSettings)
 			})
 
 			Tab:CreateButton({
-				Name = "Refresh Config List",
-				Description = "Refresh the current config list.",
+				Name = "Перезагрузить лист конфигов",
+				Description = nil,
 				Callback = function()
 					configSelection:Set({ Options = Luna:RefreshConfigList() })
 				end,
@@ -6295,47 +6295,47 @@ function Luna:CreateWindow(WindowSettings)
 
 			local loadlabel
 			Tab:CreateButton({
-				Name = "Set as autoload",
-				Description = "Set a config to auto load setting in your next session.",
+				Name = "Поставить в автозагрузку",
+				Description = nil,
 				Callback = function()
 					local name = selectedConfig
 					writefile(Luna.Folder .. "/settings/autoload.txt", name)
-					loadlabel:Set({ Text = "Current autoload config: " .. name })
+					loadlabel:Set({ Text = "Текущий конфиг в автозагрузке: " .. name })
 
 					Luna:Notification({
 						Title = "Interface",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = string.format("Set %q to auto load", name),
+						Content = string.format("Конфиг %q поставлен в автозагрузку", name),
 					})
 				end,
 			})
 
 			loadlabel = Tab:CreateParagraph({
-				Title = "Current Auto Load",
-				Text = "None"
+				Title = "Текущая автозагрузка",
+				Text = "Пусто"
 			})
 
 			Tab:CreateButton({
-				Name = "Delete Autoload",
-				Description = "Delete The Autoload File",
+				Name = "Удалить конфиг из автозагрузки",
+				Description = nil,
 				Callback = function()
 					local name = selectedConfig
 					delfile(Luna.Folder .. "/settings/autoload.txt")
-					loadlabel:Set({ Text = "None" })
+					loadlabel:Set({ Text = "Пусто" })
 
 					Luna:Notification({
 						Title = "Interface",
 						Icon = "info",
 						ImageSource = "Material",
-						Content = "Deleted Autoload",
+						Content = "Удален конфиг из автозагрузки",
 					})
 				end,
 			})
 
 			if isfile(Luna.Folder .. "/settings/autoload.txt") then
 				local name = readfile(Luna.Folder .. "/settings/autoload.txt")
-				loadlabel:Set( { Text = "Current autoload config: " .. name })
+				loadlabel:Set( { Text = "Текущая автозагрузка: " .. name })
 			end     
 		end
 
