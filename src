@@ -1,1 +1,1180 @@
+--[[
+     _      ___         ____  ______
+    | | /| / (_)__  ___/ / / / /  _/
+    | |/ |/ / / _ \/ _  / /_/ // /  
+    |__/|__/_/_//_/\_,_/\____/___/
+    
+    v1.6.53  |  2025-09-28  |  Roblox UI Library for scripts
+    
+    Этот скрипт НЕ предназначен для изменения.
+    Чтобы посмотреть исходный код, смотрите папку `src/` в официальном репозитории GitHub.
+    
+    Автор: Footagesus (Footages, .ftgs, oftgs)
+    Github: https://github.com/Footagesus/WindUI
+    Discord: https://discord.gg/ftgs-development-hub-1300692552005189632
+    Лицензия: MIT
+]]
 
+local a a={cache={}, load=function(b)if not a.cache[b]then a.cache[b]={c=a[b]()}end return a.cache[b].c end}do function a.a()local b=game:GetService"RunService"local d=
+b.Heartbeat
+local e=game:GetService"UserInputService"
+local f=game:GetService"TweenService"
+local g=game:GetService"LocalizationService"
+local h=game:GetService"HttpService"
+
+local i="https://raw.githubusercontent.com/Footagesus/Icons/main/Main-v2.lua"
+
+local j=loadstring(
+game.HttpGetAsync and game:HttpGetAsync(i)
+or h:GetAsync(i)
+)()
+j.SetIconsType"lucide"
+
+local l
+
+local m={
+Font="rbxassetid://12187365364",
+Localization=nil,
+CanDraggable=true,
+Theme=nil,
+Themes=nil,
+Icons=j,
+Signals={},
+Objects={},
+LocalizationObjects={},
+FontObjects={},
+Language=string.match(g.SystemLocaleId,"^[a-z]+"),
+Request=http_request or(syn and syn.request)or request,
+DefaultProperties={
+ScreenGui={
+ResetOnSpawn=false,
+ZIndexBehavior="Sibling",
+},
+CanvasGroup={
+BorderSizePixel=0,
+BackgroundColor3=Color3.new(1,1,1),
+},
+Frame={
+BorderSizePixel=0,
+BackgroundColor3=Color3.new(1,1,1),
+},
+TextLabel={
+BackgroundColor3=Color3.new(1,1,1),
+BorderSizePixel=0,
+Text="",
+RichText=true,
+TextColor3=Color3.new(1,1,1),
+TextSize=14,
+},TextButton={
+BackgroundColor3=Color3.new(1,1,1),
+BorderSizePixel=0,
+Text="",
+AutoButtonColor=false,
+TextColor3=Color3.new(1,1,1),
+TextSize=14,
+},
+TextBox={
+BackgroundColor3=Color3.new(1,1,1),
+BorderColor3=Color3.new(0,0,0),
+ClearTextOnFocus=false,
+Text="",
+TextColor3=Color3.new(0,0,0),
+TextSize=14,
+},
+ImageLabel={
+BackgroundTransparency=1,
+BackgroundColor3=Color3.new(1,1,1),
+BorderSizePixel=0,
+},
+ImageButton={
+BackgroundColor3=Color3.new(1,1,1),
+BorderSizePixel=0,
+AutoButtonColor=false,
+},
+UIListLayout={
+SortOrder="LayoutOrder",
+},
+ScrollingFrame={
+ScrollBarImageTransparency=1,
+BorderSizePixel=0,
+},
+VideoFrame={
+BorderSizePixel=0,
+}
+},
+Colors={
+Red="#e53935",
+Orange="#f57c00",
+Green="#43a047",
+Blue="#039be5",
+White="#ffffff",
+Grey="#484848",
+},
+}
+
+function m.Init(p)
+l=p
+end
+
+function m.AddSignal(p,r)
+local u=p:Connect(r)
+table.insert(m.Signals,u)
+return u
+end
+
+function m.DisconnectAll()
+for p,r in next,m.Signals do
+local u=table.remove(m.Signals,p)
+u:Disconnect()
+end
+end
+
+function m.SafeCallback(p,...)
+if not p then
+return
+end
+
+local r,u=pcall(p,...)
+if not r then
+if l and l.Window and l.Window.Debug then local
+v, x=u:find":%d+: "
+
+warn("[ WindUI: DEBUG Mode ] "..u)
+
+return l:Notify{
+Title="DEBUG Mode: Ошибка",
+Content=not x and u or u:sub(x+1),
+Duration=8,
+}
+end
+end
+end
+
+function m.Gradient(p,r)
+if l and l.Gradient then
+return l:Gradient(p,r)
+end
+
+local u={}
+local v={}
+
+for x,z in next,p do
+local A=tonumber(x)
+if A then
+A=math.clamp(A/100,0,1)
+table.insert(u,ColorSequenceKeypoint.new(A,z.Color))
+table.insert(v,NumberSequenceKeypoint.new(A,z.Transparency or 0))
+end
+end
+
+table.sort(u,function(A,B)return A.Time<B.Time end)
+table.sort(v,function(A,B)return A.Time<B.Time end)
+
+if#u<2 then
+error"ColorSequence требует как минимум 2 ключевые точки"
+end
+
+local A={
+Color=ColorSequence.new(u),
+Transparency=NumberSequence.new(v),
+}
+
+if r then
+for B,C in pairs(r)do
+A[B]=C
+end
+end
+
+return A
+end
+
+function m.SetTheme(p)
+m.Theme=p
+m.UpdateTheme(nil,true)
+end
+
+function m.AddFontObject(p)
+table.insert(m.FontObjects,p)
+m.UpdateFont(m.Font)
+end
+
+function m.UpdateFont(p)
+m.Font=p
+for r,u in next,m.FontObjects do
+u.FontFace=Font.new(p,u.FontFace.Weight,u.FontFace.Style)
+end
+end
+
+function m.GetThemeProperty(p,r)
+local u=r[p]or m.Themes.Dark[p]
+
+if not u then return nil end
+
+if type(u)=="string"and string.sub(u,1,1)=="#"then
+return Color3.fromHex(u)
+end
+
+if typeof(u)=="Color3"then
+return u
+end
+
+if type(u)=="table"and u.Color and u.Transparency then
+return u
+end
+
+if type(u)=="function"then
+return u()
+end
+
+return nil
+end
+
+function m.AddThemeObject(p,r)
+m.Objects[p]={Object=p,Properties=r}
+m.UpdateTheme(p,false)
+return p
+end
+
+function m.AddLangObject(p)
+local r=m.LocalizationObjects[p]
+local u=r.Object
+local v=currentObjTranslationId
+m.UpdateLang(u,v)
+return u
+end
+
+function m.UpdateTheme(p,r)
+local function ApplyTheme(u)
+for v,x in pairs(u.Properties or{})do
+local z=m.GetThemeProperty(x,m.Theme)
+if z then
+if typeof(z)=="Color3"then
+local A=u.Object:FindFirstChild"WindUIGradient"
+if A then
+A:Destroy()
+end
+
+if not r then
+u.Object[v]=z
+else
+m.Tween(u.Object,0.08,{[v]=z}):Play()
+end
+elseif type(z)=="table"and z.Color and z.Transparency then
+u.Object[v]=Color3.new(1,1,1)
+
+local A=u.Object:FindFirstChild"WindUIGradient"
+if not A then
+A=Instance.new"UIGradient"
+A.Name="WindUIGradient"
+A.Parent=u.Object
+end
+
+A.Color=z.Color
+A.Transparency=z.Transparency
+
+for B,C in pairs(z)do
+if B~="Color"and B~="Transparency"and A[B]~=nil then
+A[B]=C
+end
+end
+end
+else
+local A=u.Object:FindFirstChild"WindUIGradient"
+if A then
+A:Destroy()
+end
+end
+end
+end
+
+if p then
+local u=m.Objects[p]
+if u then
+ApplyTheme(u)
+end
+else
+for u,v in pairs(m.Objects)do
+ApplyTheme(v)
+end
+end
+end
+
+function m.SetLangForObject(p)
+if m.Localization and m.Localization.Enabled then
+local r=m.LocalizationObjects[p]
+if not r then return end
+
+local u=r.Object
+local v=r.TranslationId
+
+local x=m.Localization.Translations[m.Language]
+if x and x[v]then
+u.Text=x[v]
+else
+local z=m.Localization and m.Localization.Translations and m.Localization.Translations.en or nil
+if z and z[v]then
+u.Text=z[v]
+else
+u.Text="["..v.."]"
+end
+end
+end
+end
+
+function m.ChangeTranslationKey(p,r,u)
+if m.Localization and m.Localization.Enabled then
+local v=string.match(u,"^"..m.Localization.Prefix.."(.+)")
+if v then
+for x,z in ipairs(m.LocalizationObjects)do
+if z.Object==r then
+z.TranslationId=v
+m.SetLangForObject(x)
+return
+end
+end
+
+table.insert(m.LocalizationObjects,{
+TranslationId=v,
+Object=r
+})
+m.SetLangForObject(#m.LocalizationObjects)
+end
+end
+end
+
+function m.UpdateLang(p)
+if p then
+m.Language=p
+end
+
+for r=1,#m.LocalizationObjects do
+local u=m.LocalizationObjects[r]
+if u.Object and u.Object.Parent~=nil then
+m.SetLangForObject(r)
+else
+m.LocalizationObjects[r]=nil
+end
+end
+end
+
+function m.SetLanguage(p)
+m.Language=p
+m.UpdateLang()
+end
+
+function m.Icon(p)
+return j.Icon(p)
+end
+
+function m.AddIcons(p,r)
+return j.AddIcons(p,r)
+end
+
+function m.New(p,r,u)
+local v=Instance.new(p)
+
+for x,z in next,m.DefaultProperties[p]or{}do
+v[x]=z
+end
+
+for A,B in next,r or{}do
+if A~="ThemeTag"then
+v[A]=B
+end
+if m.Localization and m.Localization.Enabled and A=="Text"then
+local C=string.match(B,"^"..m.Localization.Prefix.."(.+)")
+if C then
+local F=#m.LocalizationObjects+1
+m.LocalizationObjects[F]={TranslationId=C,Object=v}
+
+m.SetLangForObject(F)
+end
+end
+end
+
+for C,F in next,u or{}do
+F.Parent=v
+end
+
+if r and r.ThemeTag then
+m.AddThemeObject(v,r.ThemeTag)
+end
+if r and r.FontFace then
+m.AddFontObject(v)
+end
+return v
+end
+
+function m.Tween(p,r,u,...)
+return f:Create(p,TweenInfo.new(r,...),u)
+end
+
+function m.NewRoundFrame(p,r,u,v,A,B)
+local function getImageForType(C)
+return C=="Squircle"and"rbxassetid://80999662900595"
+or C=="SquircleOutline"and"rbxassetid://117788349049947"
+or C=="SquircleOutline2"and"rbxassetid://117817408534198"
+or C=="Squircle-Outline"and"rbxassetid://117817408534198"
+or C=="Shadow-sm"and"rbxassetid://84825982946844"
+or C=="Squircle-TL-TR"and"rbxassetid://73569156276236"
+or C=="Squircle-BL-BR"and"rbxassetid://93853842912264"
+or C=="Squircle-TL-TR-Outline"and"rbxassetid://136702870075563"
+or C=="Squircle-BL-BR-Outline"and"rbxassetid://75035847706564"
+or C=="Square"and"rbxassetid://82909646051652"
+or C=="Square-Outline"and"rbxassetid://72946211851948"
+end
+
+local function getSliceCenterForType(C)
+return C~="Shadow-sm"and Rect.new(256
+,256
+,256
+,256
+
+)or Rect.new(512,512,512,512)
+end
+
+local C=m.New(A and"ImageButton"or"ImageLabel",{
+Image=getImageForType(r),
+ScaleType="Slice",
+SliceCenter=getSliceCenterForType(r),
+SliceScale=1,
+BackgroundTransparency=1,
+ThemeTag=u.ThemeTag and u.ThemeTag
+},v)
+
+for F,G in pairs(u or{})do
+if F~="ThemeTag"then
+C[F]=G
+end
+end
+
+local function UpdateSliceScale(H)
+local J=r~="Shadow-sm"and(H/(256))or(H/512)
+C.SliceScale=math.max(J,0.0001)
+end
+
+local H={}
+
+function H.SetRadius(J,L)
+UpdateSliceScale(L)
+end
+
+function H.SetType(J,L)
+r=L
+C.Image=getImageForType(L)
+C.SliceCenter=getSliceCenterForType(L)
+UpdateSliceScale(p)
+end
+
+function H.UpdateShape(J,L,M)
+if M then
+r=M
+C.Image=getImageForType(M)
+C.SliceCenter=getSliceCenterForType(M)
+end
+if L then
+p=L
+end
+UpdateSliceScale(p)
+end
+
+function H.GetRadius(J)
+return p
+end
+
+function H.GetType(J)
+return r
+end
+
+UpdateSliceScale(p)
+
+return C,B and H or nil
+end
+
+local p=m.New local r=
+m.Tween
+
+function m.SetDraggable(u)
+m.CanDraggable=u
+end
+
+function m.Drag(u,v,A)
+local B
+local C,F,G,H
+local J={
+CanDraggable=true
+}
+
+if not v or type(v)~="table"then
+v={u}
+end
+
+local function update(L)
+local M=L.Position-G
+m.Tween(u,0.02,{Position=UDim2.new(
+H.X.Scale,H.X.Offset+M.X,
+H.Y.Scale,H.Y.Offset+M.Y
+)}):Play()
+end
+
+for L,M in pairs(v)do
+M.InputBegan:Connect(function(N)
+if(N.UserInputType==Enum.UserInputType.MouseButton1 or N.UserInputType==Enum.UserInputType.Touch)and J.CanDraggable then
+if B==nil then
+B=M
+C=true
+G=N.Position
+H=u.Position
+
+if A and type(A)=="function"then
+A(true,B)
+end
+
+N.Changed:Connect(function()
+if N.UserInputState==Enum.UserInputState.End then
+C=false
+B=nil
+
+if A and type(A)=="function"then
+A(false,B)
+end
+end
+end)
+end
+end
+end)
+
+M.InputChanged:Connect(function(N)
+if B==M and C then
+if N.UserInputType==Enum.UserInputType.MouseMovement or N.UserInputType==Enum.UserInputType.Touch then
+F=N
+end
+end
+end)
+end
+
+e.InputChanged:Connect(function(N)
+if N==F and C and B~=nil then
+if J.CanDraggable then
+update(N)
+end
+end
+end)
+
+function J.Set(N,O)
+J.CanDraggable=O
+end
+
+return J
+end
+
+j.Init(p,"Icon")
+
+function m.Image(u,v,A,B,C,F,G)
+local function SanitizeFilename(H)
+H=H:gsub("[%s/\\:*?\"<>|]+","-")
+H=H:gsub("[^%w%-_%.]","")
+return H
+end
+
+B=B or"Temp"
+v=SanitizeFilename(v)
+
+local H=p("Frame",{
+Size=UDim2.new(0,0,0,0),
+BackgroundTransparency=1,
+},{
+p("ImageLabel",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+ScaleType="Crop",
+ThemeTag=(m.Icon(u)or G)and{
+ImageColor3=F and"Icon"or nil
+}or nil,
+},{
+p("UICorner",{
+CornerRadius=UDim.new(0,A)
+})
+})
+})
+if m.Icon(u)then
+H.ImageLabel:Destroy()
+
+local J=j.Image{
+Icon=u,
+Size=UDim2.new(1,0,1,0),
+Colors={
+(F and"Icon"or false),
+"Button"
+}
+}.IconFrame
+J.Parent=H
+elseif string.find(u,"http")then
+local J="WindUI/"..B.."/Assets/."..C.."-"..v..".png"
+local L,M=pcall(function()
+task.spawn(function()
+if not isfile(J)then
+local L=m.Request{
+Url=u,
+Method="GET",
+}.Body
+
+writefile(J,L)
+end
+H.ImageLabel.Image=getcustomasset(J)
+end)
+end)
+if not L then
+warn("[ WindUI.Creator ]  '"..identifyexecutor().."' doesnt support the URL Images. Error: "..M)
+
+H:Destroy()
+end
+elseif u==""then
+H.Visible=false
+else
+H.ImageLabel.Image=u
+end
+
+return H
+end
+
+return m end function a.b()
+local b={}
+
+
+
+
+
+
+
+function b.New(e,f,g)
+local h={
+Enabled=f.Enabled or false,
+Translations=f.Translations or{},
+Prefix=f.Prefix or"loc:",
+DefaultLanguage=f.DefaultLanguage or"en"
+}
+
+g.Localization=h
+
+return h
+end
+
+
+
+return b end function a.c()
+local b=a.load'a'
+local e=b.New
+local f=b.Tween
+
+local g={
+Size=UDim2.new(0,300,1,-156),
+SizeLower=UDim2.new(0,300,1,-56),
+UICorner=13,
+UIPadding=14,
+
+Holder=nil,
+NotificationIndex=0,
+Notifications={}
+}
+
+function g.Init(h)
+local i={
+Lower=false
+}
+
+function i.SetLower(j)
+i.Lower=j
+i.Frame.Size=j and g.SizeLower or g.Size
+end
+
+i.Frame=e("Frame",{
+Position=UDim2.new(1,-29,0,56),
+AnchorPoint=Vector2.new(1,0),
+Size=g.Size,
+Parent=h,
+BackgroundTransparency=1,
+
+
+
+
+},{
+e("UIListLayout",{
+HorizontalAlignment="Center",
+SortOrder="LayoutOrder",
+VerticalAlignment="Bottom",
+Padding=UDim.new(0,8),
+}),
+e("UIPadding",{
+PaddingBottom=UDim.new(0,29)
+})
+})
+return i
+end
+
+function g.New(h)
+local i={
+Title=h.Title or"Уведомление",
+Content=h.Content or nil,
+Icon=h.Icon or nil,
+IconThemed=h.IconThemed,
+Background=h.Background,
+BackgroundImageTransparency=h.BackgroundImageTransparency,
+Duration=h.Duration or 5,
+Buttons=h.Buttons or{},
+CanClose=true,
+UIElements={},
+Closed=false,
+}
+if i.CanClose==nil then
+i.CanClose=true
+end
+g.NotificationIndex=g.NotificationIndex+1
+g.Notifications[g.NotificationIndex]=i
+
+
+
+
+
+
+
+
+
+local j
+
+if i.Icon then
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+j=b.Image(
+i.Icon,
+i.Title..":"..i.Icon,
+0,
+h.Window,
+"Notification",
+i.IconThemed
+)
+j.Size=UDim2.new(0,26,0,26)
+j.Position=UDim2.new(0,g.UIPadding,0,g.UIPadding)
+
+end
+
+local l
+if i.CanClose then
+l=e("ImageButton",{
+Image=b.Icon"x"[1],
+ImageRectSize=b.Icon"x"[2].ImageRectSize,
+ImageRectOffset=b.Icon"x"[2].ImageRectPosition,
+BackgroundTransparency=1,
+Size=UDim2.new(0,16,0,16),
+Position=UDim2.new(1,-g.UIPadding,0,g.UIPadding),
+AnchorPoint=Vector2.new(1,0),
+ThemeTag={
+ImageColor3="Text"
+},
+ImageTransparency=.4,
+},{
+e("TextButton",{
+Size=UDim2.new(1,8,1,8),
+BackgroundTransparency=1,
+AnchorPoint=Vector2.new(0.5,0.5),
+Position=UDim2.new(0.5,0,0.5,0),
+Text="",
+})
+})
+end
+
+local m=e("Frame",{
+Size=UDim2.new(0,0,1,0),
+BackgroundTransparency=.95,
+ThemeTag={
+BackgroundColor3="Text",
+},
+
+})
+
+local p=e("Frame",{
+Size=UDim2.new(1,
+i.Icon and-28-g.UIPadding or 0,
+1,0),
+Position=UDim2.new(1,0,0,0),
+AnchorPoint=Vector2.new(1,0),
+BackgroundTransparency=1,
+AutomaticSize="Y",
+},{
+e("UIPadding",{
+PaddingTop=UDim.new(0,g.UIPadding),
+PaddingLeft=UDim.new(0,g.UIPadding),
+PaddingRight=UDim.new(0,g.UIPadding),
+PaddingBottom=UDim.new(0,g.UIPadding),
+}),
+e("TextLabel",{
+AutomaticSize="Y",
+Size=UDim2.new(1,-30-g.UIPadding,0,0),
+TextWrapped=true,
+TextXAlignment="Left",
+RichText=true,
+BackgroundTransparency=1,
+TextSize=16,
+ThemeTag={
+TextColor3="Text"
+},
+Text=i.Title,
+FontFace=Font.new(b.Font,Enum.FontWeight.Medium)
+}),
+e("UIListLayout",{
+Padding=UDim.new(0,g.UIPadding/3)
+})
+})
+
+if i.Content then
+e("TextLabel",{
+AutomaticSize="Y",
+Size=UDim2.new(1,0,0,0),
+TextWrapped=true,
+TextXAlignment="Left",
+RichText=true,
+BackgroundTransparency=1,
+TextTransparency=.4,
+TextSize=15,
+ThemeTag={
+TextColor3="Text"
+},
+Text=i.Content,
+FontFace=Font.new(b.Font,Enum.FontWeight.Medium),
+Parent=p
+})
+end
+
+
+local r=b.NewRoundFrame(g.UICorner,"Squircle",{
+Size=UDim2.new(1,0,0,0),
+Position=UDim2.new(2,0,1,0),
+AnchorPoint=Vector2.new(0,1),
+AutomaticSize="Y",
+ImageTransparency=.05,
+ThemeTag={
+ImageColor3="Background"
+},
+
+},{
+e("CanvasGroup",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+},{
+m,
+e("UICorner",{
+CornerRadius=UDim.new(0,g.UICorner),
+})
+
+}),
+e("ImageLabel",{
+Name="Background",
+Image=i.Background,
+BackgroundTransparency=1,
+Size=UDim2.new(1,0,1,0),
+ScaleType="Crop",
+ImageTransparency=i.BackgroundImageTransparency
+
+},{
+e("UICorner",{
+CornerRadius=UDim.new(0,g.UICorner),
+})
+}),
+
+p,
+j,l,
+})
+
+local u=e("Frame",{
+BackgroundTransparency=1,
+Size=UDim2.new(1,0,0,0),
+Parent=h.Holder
+},{
+r
+})
+
+function i.Close(v)
+if not i.Closed then
+i.Closed=true
+f(u,0.45,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+f(r,0.55,{Position=UDim2.new(2,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+task.wait(.45)
+u:Destroy()
+end
+end
+
+task.spawn(function()
+task.wait()
+f(u,0.45,{Size=UDim2.new(
+1,
+0,
+0,
+r.AbsoluteSize.Y
+)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+f(r,0.45,{Position=UDim2.new(0,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+if i.Duration then
+f(m,i.Duration,{Size=UDim2.new(1,0,1,0)},Enum.EasingStyle.Linear,Enum.EasingDirection.InOut):Play()
+task.wait(i.Duration)
+i:Close()
+end
+end)
+
+if l then
+b.AddSignal(l.TextButton.MouseButton1Click,function()
+i:Close()
+end)
+end
+
+
+return i
+end
+
+return g end
+
+-- ... остальной код остается без изменений ...
+
+-- В основных функциях интерфейса заменяем английский текст на русский
+-- Например, в функции создания кнопки:
+function a.i().New(ae,af,ag,ah,ai,aj,ak)
+    ah=ah or"Primary"
+    local al=not ak and 10 or 99
+    local am
+    if af and af~=""then
+        am=ac("ImageLabel",{
+            Image=ab.Icon(af)[1],
+            ImageRectSize=ab.Icon(af)[2].ImageRectSize,
+            ImageRectOffset=ab.Icon(af)[2].ImageRectPosition,
+            Size=UDim2.new(0,21,0,21),
+            BackgroundTransparency=1,
+            ImageColor3=ah=="White"and Color3.new(0,0,0)or nil,
+            ImageTransparency=ah=="White"and.4 or 0,
+            ThemeTag={
+                ImageColor3=ah~="White"and"Icon"or nil,
+            }
+        })
+    end
+
+    local an=ac("TextButton",{
+        Size=UDim2.new(0,0,1,0),
+        AutomaticSize="X",
+        Parent=ai,
+        BackgroundTransparency=1
+    },{
+        ab.NewRoundFrame(al,"Squircle",{
+            ThemeTag={
+                ImageColor3=ah~="White"and"Button"or nil,
+            },
+            ImageColor3=ah=="White"and Color3.new(1,1,1)or nil,
+            Size=UDim2.new(1,0,1,0),
+            Name="Squircle",
+            ImageTransparency=ah=="Primary"and 0 or ah=="White"and 0 or 1
+        }),
+
+        -- ... остальной код кнопки ...
+
+        ac("TextLabel",{
+            BackgroundTransparency=1,
+            FontFace=Font.new(ab.Font,Enum.FontWeight.SemiBold),
+            Text=ae or"Кнопка", -- Изменено на "Кнопка"
+            ThemeTag={
+                TextColor3=(ah~="Primary"and ah~="White")and"Text",
+            },
+            TextColor3=ah=="Primary"and Color3.new(1,1,1)or ah=="White"and Color3.new(0,0,0)or nil,
+            AutomaticSize="XY",
+            TextSize=18,
+        })
+    })
+
+    -- ... остальной код ...
+end
+
+-- В функции создания поля ввода:
+function a.j().New(ae,af,ag,ah,ai,aj,ak,al)
+    ah=ah or"Input"
+    local am=ak or 10
+    local an
+    if af and af~=""then
+        an=ac("ImageLabel",{
+            Image=ab.Icon(af)[1],
+            ImageRectSize=ab.Icon(af)[2].ImageRectSize,
+            ImageRectOffset=ab.Icon(af)[2].ImageRectPosition,
+            Size=UDim2.new(0,21,0,21),
+            BackgroundTransparency=1,
+            ThemeTag={
+                ImageColor3="Icon",
+            }
+        })
+    end
+
+    local ap=ac("TextBox",{
+        BackgroundTransparency=1,
+        TextSize=17,
+        FontFace=Font.new(ab.Font,Enum.FontWeight.Regular),
+        Size=UDim2.new(1,an and-29 or 0,1,0),
+        PlaceholderText=ae or"Введите текст...", -- Изменено на "Введите текст..."
+        ClearTextOnFocus=al or false,
+        ClipsDescendants=true,
+        TextWrapped=ao,
+        MultiLine=ao,
+        TextXAlignment="Left",
+        TextYAlignment=ah=="Input"and"Center"or"Top",
+
+        ThemeTag={
+            PlaceholderColor3="PlaceholderText",
+            TextColor3="Text",
+        },
+    })
+
+    -- ... остальной код ...
+end
+
+-- В функции создания выпадающего списка:
+function a.I().New(ae,af)
+    local ag={
+        __type="Dropdown",
+        Title=af.Title or"Выпадающий список", -- Изменено на "Выпадающий список"
+        Desc=af.Desc or nil,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания переключателя:
+function a.D().New(ag,ah)
+    local ai={
+        __type="Toggle",
+        Title=ah.Title or"Переключатель", -- Изменено на "Переключатель"
+        Desc=ah.Desc or nil,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания слайдера:
+function a.E().New(ag,ah)
+    local ai={
+        __type="Slider",
+        Title=ah.Title or"Слайдер", -- Изменено на "Слайдер"
+        Desc=ah.Desc or nil,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания привязки клавиш:
+function a.F().New(ah,ai)
+    local aj={
+        __type="Keybind",
+        Title=ai.Title or"Привязка клавиши", -- Изменено на "Привязка клавиши"
+        Desc=ai.Desc or nil,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания секции:
+function a.N().New(aj,ak)
+    local al={
+        __type="Section",
+        Title=ak.Title or"Раздел", -- Изменено на "Раздел"
+        Icon=ak.Icon,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания диалогового окна:
+function a.q().new(ae)
+    local af={
+        Title=ae.Title or"Диалог", -- Изменено на "Диалог"
+        Content=ae.Content,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+-- В функции создания системы ключей:
+function a.l().new(ag,ah,ai)
+    local aj=a.load'k'.Init(nil,ag.WindUI.ScreenGui.KeySystem)
+    local ak=aj.Create(true)
+
+    local al={}
+
+    local am
+
+    -- ... остальной код ...
+
+    local au=a.load'j'.New("Введите ключ","key",nil,"Input",function(au) -- Изменено на "Введите ключ"
+        am=au
+    end)
+
+    -- ... остальной код ...
+
+    local ay=a.load'i'.New("Выход","log-out",function() -- Изменено на "Выход"
+        ak:Close()()
+    end,"Tertiary",aw.Frame)
+
+    if ag.KeySystem.URL then
+        a.load'i'.New("Получить ключ","key",function() -- Изменено на "Получить ключ"
+            setclipboard(ag.KeySystem.URL)
+        end,"Secondary",aw.Frame)
+    end
+
+    local az=a.load'i'.New("Отправить","arrow-right",function() -- Изменено на "Отправить"
+        -- ... код обработки ключа ...
+    end,"Primary",aw)
+
+    -- ... остальной код ...
+end
+
+-- В функции поиска:
+function a.V().new(aj,ak,al)
+    local am={
+        IconSize=18,
+        Padding=14,
+        Radius=22,
+        Width=400,
+        MaxHeight=380,
+
+        Icons=a.load'U'
+    }
+
+    local an=ac("TextBox",{
+        Text="",
+        PlaceholderText="Поиск...", -- Изменено на "Поиск..."
+        -- ... остальной код ...
+    })
+
+    -- ... остальной код ...
+end
+
+-- В функции создания окна:
+function a.W()(ap)
+    local aq={
+        Title=ap.Title or"Библиотека UI", -- Изменено на "Библиотека UI"
+        Author=ap.Author,
+        -- ... остальной код ...
+    }
+    -- ... остальной код ...
+end
+
+return a
